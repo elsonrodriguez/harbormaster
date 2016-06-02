@@ -111,6 +111,7 @@ make_boot() {
     if [ -n "$syslinux" ]; then
         mv -v $syslinux BOOT/syslinux.cfg \
         || die 1 "couldn't move $syslinux to Boot/"
+        mv -v $ks BOOT/ || die 16 "Couldn't move $ks to BOOT/"
     else
         edit_syslinux
     fi
@@ -124,6 +125,7 @@ make_data() {
     cp -v $iso DATA/ || die 1 "couldn't copy $iso to DATA/"
     cp -av ../cobbler-repo DATA/ || die 1 "couldn't copy cobbler-repo to DATA/"
     cp -av ../cobbler DATA/ || die 1 "couldn't copy cobbler to DATA/"
+    cp -av ../cobbler/tftp DATA/ || die 1 "couldn't copy tftp to DATA/"
 }
 
 clean_up() {
@@ -150,7 +152,7 @@ edit_syslinux() {
 
     if [ -n "$splash" ]; then
         sed -i \
-        's/\(menu background \).*/\1'"$splash"'/I'
+        's/\(menu background \).*/\1'"$splash"'/I' \
         BOOT/syslinux.cfg
     fi
 }

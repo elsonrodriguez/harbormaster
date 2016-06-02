@@ -1,0 +1,42 @@
+- USB Key Creator
+-- Downloads ubuntu 16 server iso
+-- Mirrors Ubuntu16 repo
+-- Mirrors epel (just enough for cobbler)
+-- Creates cobbler configs by asking questions about network
+-- write everything to USB Key
+
+
+
+
+
+
+docker run --env https_proxy=$HTTP_PROXY \
+ --env http_proxy=$HTTP_PROXY \
+ --env https_proxy=$HTTP_PROXY \
+ --env http_proxy=$HTTP_PROXY \
+ --env HTTP_PROXY=$HTTP_PROXY \
+ --env HTTPS_PROXY=$HTTP_PROXY \
+ --env NO_PROXY=$NO_PROXY \
+ --env no_proxy=$NO_PROXY \
+ -v /Users:/Users --privileged -it --rm centos:7  bash
+
+packages required for creating key:
+yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo
+yum install -y cobbler
+
+cd /Users/eorodrig/oss/make-centos-bootstick
+
+sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
+httpd
+cobblerd
+cobbler get-loaders --force
+
+cp -a /var/lib/cobbler/loaders cobbler/var/
+
+repotrack -a x86_64 -p cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
+createrepo cobbler-repo/
+
+#dd if=/dev/zero of=kube-bootstrap.img bs=1M count=5000
+kpartx -a ./example.img
+
+./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg -c /Users/eorodrig/oss/make-centos-bootstick/syslinux.cfg -s /Users/eorodrig/oss/make-centos-bootstick/k8splash.png loop1
