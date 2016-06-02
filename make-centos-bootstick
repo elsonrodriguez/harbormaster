@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # Insert a usb stick (at least 1G) into a CentOS 7 machine.
 # yum -y install syslinux dosfstools
@@ -14,12 +14,14 @@
 # TODO
 # Don't use such a dumb "tmp_dir"
 # More complete cleanup
+#/iso
 
 tmp_dir="./bootstick"
 # Since the mbr.bin is kept in different places in different versions.
 mbr=$(rpm -ql syslinux | grep '/mbr.bin$')
 mirror=http://mirrors.cmich.edu/centos/7/isos/x86_64
-iso=CentOS-7-x86_64-NetInstall-1511.iso
+#iso=CentOS-7-x86_64-NetInstall-1511.iso
+iso=CentOS-7-x86_64-DVD-1511.iso
 md5sum=md5sum.txt
 ks=ks.cfg
 usage="USAGE: $0 [-r REMOTE_KS ] [-k LOCAL_KS] [-c CUSTOM_SYSLINUX] [-i ISO] \
@@ -80,25 +82,25 @@ n
 
 
 w
-' | fdisk $dev
+' | fdisk /dev/$dev
 }
 
 format_partitions() {
-    mkfs -t vfat -n "BOOT" ${dev}1
-    mkfs -L "DATA" ${dev}2
+    mkfs -t vfat -n "BOOT" /dev/mapper/${dev}p1
+    mkfs -L "DATA" /dev/mapper/${dev}p2
 }
 
 write_mbr() {
-     dd conv=notrunc bs=440 count=1 if=$mbr of=$dev
+     dd conv=notrunc bs=440 count=1 if=$mbr of=/dev/$dev
 }
 
 install_syslinux() {
-    syslinux ${dev}1
+    syslinux /dev/mapper/${dev}p1
 }
 
 mount_parts() {
-    mkdir -p BOOT && mount ${dev}1 BOOT
-    mkdir -p DATA && mount ${dev}2 DATA
+    mkdir -p BOOT && mount /dev/mapper/${dev}p1 BOOT
+    mkdir -p DATA && mount /dev/mapper/${dev}p2 DATA
     mkdir -p DVD  && mount -t iso9660 -o loop $PWD/$iso    $PWD/DVD
 }
 
@@ -120,11 +122,13 @@ make_boot() {
 
 make_data() {
     cp -v $iso DATA/ || die 1 "couldn't copy $iso to DATA/"
+    cp -av ../cobbler-repo DATA/ || die 1 "couldn't copy cobbler-repo to DATA/"
+    cp -av ../cobbler DATA/ || die 1 "couldn't copy cobbler to DATA/"
 }
 
 clean_up() {
-    umount ${dev}1
-    umount ${dev}2
+    umount /dev/mapper/${dev}p1
+    umount /dev/mapper/${dev}p2
     umount $iso
 }
 

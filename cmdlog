@@ -1,0 +1,235 @@
+    1  yum install -y syslinux dosfstools e2fsprogs parted
+    2  cd /Users/eorodrig/oss/make-centos-bootstick
+    3  ls
+    4  losetup -l
+    5  kpartx -v -a ./example.img
+    6  losetup  -l
+    7  fdisk  -l /dev/loop0 
+    8  udevadm trigger /dev/loop0 
+    9  dmes
+   10  dmesg
+   11  fdisk  -l /dev/loop0 
+   12  mount /dev/loop0p2 /mnt/test
+   13  mkdir /mnt/test
+   14  mount /dev/loop0p2 /mnt/test
+   15  partprobe /dev/loop0 
+   16  mount /dev/loop0p2 /mnt/test
+   17  partprobe -h
+   18  partprobe 
+   19  mount /dev/loop0p2 /mnt/test
+   20  ls /dev/mapper/loop0p1 
+   21  ls
+   22  vim make-centos-bootstick 
+   23  yum install vim
+   24  ls
+   25  vim make-centos-bootstick 
+   26  ./make-centos-bootstick loop0
+   27  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg  loop0
+   28  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg  loop0
+   29  df
+   30  umount /dev/loop0 
+   31  umount /dev/loop1 
+   32  umount /dev/mapper/loop0p1 
+   33  umount /dev/mapper/loop0p2 
+   34  ls
+   35  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg  loop0
+   36  ls
+   37  df
+   38  ls -lash
+   39  ls
+   40  vim make-centos-bootstick 
+   41  ls
+   42  vim ks.cfg 
+   43  vim ks.cfg 
+   44   ls
+   45  vim ks.cfg 
+   46  vim README.md 
+   47  ls
+   48  vim ks.cfg 
+   49  vim ks.cfg 
+   50  git status
+   51  ls
+   52  ls
+   53  cd bootstick/
+   54  ls
+   55  ls
+   56  cd ..
+   57  ls
+   58  ls
+   59  df
+   60  dmesg
+   61  ls
+   62  df
+   63  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg
+   64  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop0
+   65  ls
+   66  ls
+   67  ls
+   68  mkdir cobbler-repo
+   69  repotrack -a x86_64 -p cobbler-repo/ cobbler cobbler-web
+   70  history 
+   71  yum search epel
+   72  yum search createrepo
+   73  yum install createrepo
+   74   ls
+   75  rm bootstick/CentOS-7-x86_64-NetInstall-1511.iso 
+   76  ls
+   77  ls cobbler-repo/
+   78  cp -a /Users/eorodrig/oss/kubernetes-bare-boot .
+   79  ls
+   80  mv kubernetes-bare-boot kubernetes
+   81  ls
+   82  vim make-centos-bootstick 
+   83  diff ks.cfg kubernetes/kickstart.ks 
+   84  ls
+   85  mv kubernetes/cobbler .
+   86  ls
+   87  rm -rf kubernetes/
+   88  ls
+   89  vim ks.cfg 
+   90  ls
+   91  vim ks.cfg 
+   92  yum search ipxe-bootimgs
+   93  yum search pykickstart
+   94  yum search fence-agents
+   95  yum search cobbler
+   96  yum search perl-Compress-Raw-Zlib
+   97  yum install -y syslinux dosfstools e2fsprogs parted epel createrepo 
+   98  yum search epel
+   99  yum install epel-release
+  100  repotrack -a x86_64 -p cobbler-repo/ cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
+  101   
+  102  createrepo cobbler-repo/
+  103  ls 
+  104  vim ks.cfg 
+  105  cobbler sync
+  106  ls
+  107  yum install cobbler
+  108  cobbler -h
+  109  systemctl  start apache
+  110  systemctl  start apach2
+  111  apachectl start
+  112  ps aux | grep apach
+  113  cobblerd  
+  114  cobbler  -h
+  115  cobbler  
+  116  ps aux | grep cobbler
+  117  httpd 
+  118  ps aux | grep http
+  119  cobbler
+  120  ls
+  121  vim ks.cfg 
+  122  cobbler get-loaders --force
+  123  vim /etc/cobbler/settings 
+  124  killall cobblerd
+  125  ps aux | grep cobbler
+  126  kill 716
+  127  cobblerd
+  128  vim /etc/cobbler/settings 
+  129  sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"/g' /etc/cobbler/settings
+  130  sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
+  131  cat /etc/cobbler/settings 
+  132  cobbler get-loaders --force
+  133  cp -a /var/lib/cobbler/loaders cobbler/
+  134  cp -a /var/lib/cobbler/loaders cobbler/var/
+  135  ls
+  136  vim ks.cfg 
+  137  ls
+  138  ls
+  139  rm -rf cobbler/loaders
+  140  ls
+  141  df
+  142  losetup  -l
+  143  vim ks.cfg 
+  144  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop0
+  145  ls
+  146  vim make-centos-bootstick 
+  147  vim make-centos-bootstick 
+  148  ./make-centos-bootstick 
+  149  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop0
+  150  df
+  151  umount /dev/loop1
+  152  umount /loop0p1
+  153  umount /dev/mapper/loop0p1
+  154  umount /dev/mapper/loop0p2
+  155  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop0
+  156  ls
+  157  cp -av cobbler-repo DATA/
+  158  df
+  159  umount /dev/loop1
+  160  umount /dev/mapper/loop0p1
+  161  umount /dev/mapper/loop0p2
+  162  df
+  163  ls
+  164  ls
+  165  ls
+  166  rm -rf DATA/
+  167  ls
+  168  vim make-centos-bootstick 
+  169  ls
+  170  rm  bootstick/DATA/CentOS-7-x86_64-NetInstall-1511.iso 
+  171  ls
+  172  vim make-centos-bootstick 
+  173  ls
+  174  ls bootstick/
+  175  vim make-centos-bootstick 
+  176  ls
+  177  ls bootstick/
+  178  ls bootstick/DATA/
+  179  df
+  180  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop0
+  181  vim bootstick/BOOT/syslinux.cfg 
+  182  ls
+  183  yum search ipxe-bootimgs
+  184  ls
+  185  ls
+  186  df
+  187  losetup  -l
+  188  losetup   -h
+  189  losetup  -d /dev/loop0
+  190  rm example.img 
+  191  ls
+  192  du -hs bootstick/
+  193  dd if=/dev/zero of=kube-boostrap.img bs=1M count=5000
+  194  repotrack -a x86_64 -p cobbler-repo/ cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
+  195  createrepo cobbler-repo/
+  196  kpartx -a ./example.img
+  197  kpartx -a ./kube-boostrap.img 
+  198  losetup  -l
+  199  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop1
+  200  df
+  201  umount  /dev/loop2
+  202  df
+  203  losetup  -l
+  204  losetup  -d /dev/loop1
+  205  kpartx -a ./kube-boostrap.img 
+  206  losetup  -l
+  207  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop1
+  208  ls
+  209  ls -lash kube-boostrap.img 
+  210  ls
+  211  vim ks.cfg 
+  212  ls
+  213  ls
+  214  repotrack -a x86_64 -p cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
+  215  createrepo cobbler-repo/
+  216  repotrack -h
+  217  df
+  218  kpartx -a ./example.img
+  219  kpartx -a ./kube-boostrap.img 
+  220  df
+  221  losetup  -l
+  222  losetup  -l
+  223  vim ks.cfg 
+  224  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop1
+  225  ls
+  226  ls
+  227  ls
+  228  ls
+  229  ls
+  230  ./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg loop1
+  231  vim ks.cfg 
+  232  ls
+  233  ls -lash
+  234  history 
+  235  history  > cmdlog
