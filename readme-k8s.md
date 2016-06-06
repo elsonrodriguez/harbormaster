@@ -21,10 +21,11 @@ docker run --env https_proxy=$HTTP_PROXY \
  -v /Users:/Users --privileged -it --rm centos:7  bash
 
 packages required for creating key:
-yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo
+yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo file
 yum install -y cobbler
 
 cd /Users/eorodrig/oss/make-centos-bootstick
+cp cobbler/var/* /var/lib/cobbler/
 
 sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
 httpd
@@ -33,10 +34,27 @@ cobbler get-loaders --force
 
 cp -a /var/lib/cobbler/loaders cobbler/var/
 
-repotrack -a x86_64 -p cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
+repotrack -a x86_64 -p /cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
+
+mv /cobbler-repo .
+
 createrepo cobbler-repo/
 
 #dd if=/dev/zero of=kube-bootstrap.img bs=1M count=5000
-kpartx -a ./example.img
+kpartx -a ./harbormaster.img
 
-./make-centos-bootstick -k /Users/eorodrig/oss/make-centos-bootstick/ks.cfg -c /Users/eorodrig/oss/make-centos-bootstick/syslinux.cfg -s /Users/eorodrig/oss/make-centos-bootstick/k8splash.png loop1
+./make-centos-bootstick -k ./ks.cfg -c ./syslinux.cfg -s ./k8splash.png loop0
+
+
+### clone repo from iso
+mkdir /mnt/cdrom
+curl -O -L -z http://mirror.pnl.gov/releases/16.04/ubuntu-16.04-server-amd64.iso
+mount -o loop ubuntu-16.04-server-amd64.iso /mnt/ubuntu
+cobbler import --name=ubuntu-16.04 --path=/mnt/ubuntu  --breed=ubuntu --os-version=xenial --arch=x86_64
+
+
+###to clone partial debian repo
+
+docker run  -v /Users:/Users  -it --rm ubuntu bash
+apt-get install apt-rdepends
+apt-get download koan && apt-cache depends -i koan | awk '/Depends:/ {print $2}' | grep -v "\:any" |xargs  apt-get download
