@@ -22,6 +22,8 @@ mbr=$(rpm -ql syslinux | grep '/mbr.bin$')
 mirror=http://mirrors.cmich.edu/centos/7/isos/x86_64
 #iso=CentOS-7-x86_64-NetInstall-1511.iso
 iso=CentOS-7-x86_64-DVD-1511.iso
+ubuntuiso=ubuntu-16.04-server-amd64.iso
+ubuntumirror=http://mirror.pnl.gov/releases/16.04
 md5sum=md5sum.txt
 ks=ks.cfg
 usage="USAGE: $0 [-r REMOTE_KS ] [-k LOCAL_KS] [-c CUSTOM_SYSLINUX] [-i ISO] \
@@ -44,6 +46,8 @@ fetch_iso() {
     md5sum $iso >md5sum.local
     grep -F -f md5sum.local $md5sum || die 8 "Download of $iso is incorrect"
     rm md5sum.local
+
+    curl $ubuntumirror/$ubuntuiso -L -o $ubuntuiso -z $ubuntuiso 
 }
 
 require_unmounted() {
@@ -102,6 +106,7 @@ mount_parts() {
     mkdir -p BOOT && mount /dev/mapper/${dev}p1 BOOT
     mkdir -p DATA && mount /dev/mapper/${dev}p2 DATA
     mkdir -p DVD  && mount -t iso9660 -o loop $PWD/$iso    $PWD/DVD
+    mkdir -p ../ubuntu/install && mount -t iso9660 -o loop ../$ubuntuiso ../ubuntu/install
 }
 
 make_boot() {
@@ -123,12 +128,15 @@ make_boot() {
 
 make_data() {
     cp -v $iso DATA/ || die 1 "couldn't copy $iso to DATA/"
+#    cp -v $ubuntuiso DATA/ || die 1 "couldn't copy $ubuntuiso to DATA/"
     cp -av ../cobbler-repo DATA/ || die 1 "couldn't copy cobbler-repo to DATA/"
     cp -av ../cobbler DATA/ || die 1 "couldn't copy cobbler to DATA/"
     cp -av ../cobbler/tftp DATA/ || die 1 "couldn't copy tftp to DATA/"
+    cp -av ../ubuntu DATA/ || die 1 "couldn't copy ubuntu to DATA/"
 }
 
 clean_up() {
+    umount ../$ubuntuiso
     umount /dev/mapper/${dev}p1
     umount /dev/mapper/${dev}p2
     umount $iso
@@ -213,6 +221,7 @@ test -f $iso || fetch_iso
 
 require_unmounted
 partition
+kpartx -a ./harbormaster.img
 format_partitions
 write_mbr
 install_syslinux

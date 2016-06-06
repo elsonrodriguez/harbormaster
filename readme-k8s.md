@@ -40,18 +40,16 @@ mv /cobbler-repo .
 
 createrepo cobbler-repo/
 
-#dd if=/dev/zero of=kube-bootstrap.img bs=1M count=5000
+#dd if=/dev/zero of=kube-bootstrap.img bs=1M count=6000
 kpartx -a ./harbormaster.img
 
 ./make-centos-bootstick -k ./ks.cfg -c ./syslinux.cfg -s ./k8splash.png loop0
-
 
 ### clone repo from iso
 mkdir /mnt/cdrom
 curl -O -L -z http://mirror.pnl.gov/releases/16.04/ubuntu-16.04-server-amd64.iso
 mount -o loop ubuntu-16.04-server-amd64.iso /mnt/ubuntu
 cobbler import --name=ubuntu-16.04 --path=/mnt/ubuntu  --breed=ubuntu --os-version=xenial --arch=x86_64
-
 
 ###to clone partial debian repo
 
