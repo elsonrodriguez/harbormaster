@@ -1,8 +1,16 @@
 - USB Key Creator
--- Downloads ubuntu 16 server iso
--- Mirrors Ubuntu16 repo
--- Mirrors epel (just enough for cobbler)
+-- Downloads Ubuntu 16 server iso
+-- Downloads Centos server iso
+-- Creates Ubuntu repo containing
+--- docker 
+--- etcd
+--- kubernetes
+--- ceph
+--- koan
 -- Creates cobbler configs by asking questions about network
+--- IP Range
+--- IP for cobbler
+-- 
 -- write everything to USB Key
 
 
@@ -56,3 +64,10 @@ cobbler import --name=ubuntu-16.04 --path=/mnt/ubuntu  --breed=ubuntu --os-versi
 docker run  -v /Users:/Users  -it --rm ubuntu bash
 apt-get install apt-rdepends
 apt-get download koan && apt-cache depends -i koan | awk '/Depends:/ {print $2}' | grep -v "\:any" |xargs  apt-get download
+
+Custom repo needs:
+- Docker
+- Etcd
+- Ceph mounting tools
+- Kubernetes packages
+- Koan
