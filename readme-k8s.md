@@ -65,6 +65,8 @@ docker run  -v /Users:/Users  -it --rm ubuntu bash
 apt-get install apt-rdepends
 apt-get download koan && apt-cache depends -i koan | awk '/Depends:/ {print $2}' | grep -v "\:any" |xargs  apt-get download
 
+#debootstrap --arch=amd64 xenial /mnt/ubuntu http://archive.ubuntu.com/ubuntu
+
 Custom repo needs:
 - Docker
 - Etcd
