@@ -38,17 +38,21 @@ Architectures: amd64" > /var/repositories/config/distributions
 #Method: http://archive.ubuntu.com/ubuntu
 #VerifyRelease: blindtrust
 
-
-
 #adds debian packages to repo
 reprepro -b /var/repositories includedeb xenial ~/kubernetes/builds/*.deb
 
 #tries to mirror repo
 #reprepro -b /var/repositories xenial update
 
-#60 gigs...
-#./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource /tmp/adf
+# Mirror Universe, 60 gigs...
+#./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe
 
+# Mirror just what we need from universe
+./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe --exclude='/*'  --include=ceph-fs-common --include=gir1.2-libosinfo-1.0  --include=koan   --include=libosinfo-1.0-0  --include=python-ethtool --include=python-koan  --include=virtinst
+
+# Mirror Docker Repo
+./cobbler/bin/debmirror -v -p --no-check-gpg  -h apt.dockerproject.org -r repo -d ubuntu-xenial -s main -a amd64 --method=http --nosource ubuntu/repos/docker-repo
+
+# Create usb image
 ./make-centos-bootstick -k ./ks.cfg -c ./syslinux.cfg -s ./k8splash.png loop0
-
 
