@@ -19,11 +19,11 @@
 tmp_dir="./bootstick"
 # Since the mbr.bin is kept in different places in different versions.
 mbr=$(rpm -ql syslinux | grep '/mbr.bin$')
-mirror=http://mirrors.cmich.edu/centos/7/isos/x86_64
+mirror=${CENTOS_ISO_URL}
 #iso=CentOS-7-x86_64-NetInstall-1511.iso
-iso=CentOS-7-x86_64-DVD-1511.iso
-ubuntuiso=ubuntu-16.04-server-amd64.iso
-ubuntumirror=http://mirror.pnl.gov/releases/16.04
+iso=${CENTOS_ISO_NAME}
+ubuntuiso=${UBUNTU_ISO_NAME}
+ubuntumirror=${UBUNTU_ISO_URL}
 md5sum=md5sum.txt
 ks=ks.cfg
 usage="USAGE: $0 [-r REMOTE_KS ] [-k LOCAL_KS] [-c CUSTOM_SYSLINUX] [-i ISO] \
@@ -41,7 +41,7 @@ die() {
 }
 
 fetch_iso() {
-    curl $mirror/$iso >$iso
+    curl $mirror/$iso -L -o $iso -z $iso
     curl $mirror/$md5sum >$md5sum
     md5sum $iso >md5sum.local
     grep -F -f md5sum.local $md5sum || die 8 "Download of $iso is incorrect"
@@ -221,7 +221,7 @@ test -f $iso || fetch_iso
 
 require_unmounted
 partition
-kpartx -a ./harbormaster.img
+kpartx -a ${OUTPUT_DIRECTORY}/${OUTPUT_FILENAME}
 format_partitions
 write_mbr
 install_syslinux

@@ -1,0 +1,5 @@
+*.img
+*.iso
+cobbler-repo/
+ubuntu/repos
+bootstick/

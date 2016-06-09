@@ -38,6 +38,7 @@ Architectures: amd64" > /var/repositories/config/distributions
 #Method: http://archive.ubuntu.com/ubuntu
 #VerifyRelease: blindtrust
 
+
 #adds debian packages to repo
 reprepro -b /var/repositories includedeb xenial ~/kubernetes/builds/*.deb
 
@@ -53,6 +54,9 @@ reprepro -b /var/repositories includedeb xenial ~/kubernetes/builds/*.deb
 # Mirror Docker Repo
 ./cobbler/bin/debmirror -v -p --no-check-gpg  -h apt.dockerproject.org -r repo -d ubuntu-xenial -s main -a amd64 --method=http --nosource ubuntu/repos/docker-repo
 
+# Create blank image. Should refactor this to happen right when everything's been downloaded for actual size estimate.
+dd if=/dev/zero of=${OUTPUT_DIR}/${OUTPUT_IMAGE_NAME} bs=1M count=8000
+
 # Create usb image
-./make-centos-bootstick -k ./ks.cfg -c ./syslinux.cfg -s ./k8splash.png loop0
+make-centos-bootstick -k ./ks.cfg -c ./syslinux.cfg -s ./k8splash.png loop0
 
