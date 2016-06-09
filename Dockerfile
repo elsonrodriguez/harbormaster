@@ -1,14 +1,18 @@
 FROM centos:7
 MAINTAINER Elson Rodriguez
 
+ADD . /source
+RUN chmod +x /source/*.sh
+RUN chmod +x /source/cobbler/bin/debmirror
+
 RUN yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo file
-RUN yum install -y cobbler
+RUN yum install -y cobbler reprepro
 
 RUN yum install -y perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https 
 
 ENV K8S_VERSION 1.2.0
 ENV K8S_CLUSTER_IP_RANGE 192.168.0.0/16
-ENV K8S_NODE_POD_CIDR 10.0.x.0/24
+ENV K8S_NODE_POD_CIDR 10.244.X.3
 
 ENV COBBLER_IP 172.16.101.100
 ENV NETWORK_ROUTER 172.16.101.2
@@ -21,6 +25,7 @@ ENV NETWORK_UPSTREAMDNS 8.8.8.8
 
 ENV NUM_MASTERS 1
 
+ENV BUILD_DIRECTORY /build
 ENV OUTPUT_DIRECTORY /output
 ENV OUTPUT_IMAGE_NAME harbormaster.img
 ENV BUILD_DIRECTORY /build
@@ -31,4 +36,4 @@ ENV CENTOS_ISO_NAME CentOS-7-x86_64-NetInstall-1511.iso
 ENV UBUNTU_ISO_URL http://mirror.pnl.gov/releases/16.04
 ENV UBUNTU_ISO_NAME ubuntu-16.04-server-amd64.iso
 
-ENTRYPOINT [ "/create-k8s-key.sh" ]
+ENTRYPOINT [ "/source/make-k8s-key.sh" ]

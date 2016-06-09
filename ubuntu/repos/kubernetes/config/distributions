@@ -1,0 +1,5 @@
+Codename: xenial
+Components: kubernetes
+Architectures: amd64
+Tracking: minimal
+Update: xenial

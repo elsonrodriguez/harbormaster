@@ -2,4 +2,6 @@
 cobbler-repo
 bootstick
 *.img
+ubuntu/repos/universe
+ubuntu/repos/install
 cobbler/var/loaders/*

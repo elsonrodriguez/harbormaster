@@ -1,0 +1,3 @@
+Codename: xenial
+Components: kubernetes
+Architectures: amd64
