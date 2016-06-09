@@ -1,4 +1,6 @@
-cd /make-centos-bootstick
+#need to figure out source vs build directory
+
+cd ${BUILD_DIRECTORY}
 cp cobbler/var/* /var/lib/cobbler/
 
 sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
