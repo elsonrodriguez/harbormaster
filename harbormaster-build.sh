@@ -12,7 +12,7 @@ sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/set
 # DO THE OTHER SEDDY THINGS.
 envsubst < templates/ks.cfg > ks.cfg
 envsubst < templates/cobbler/etc/dhcp.template.tmpl > cobbler/etc/dhcp.template
-envsubst < templates/cobbler/etc/named.templat.tmpl > cobbler/etc/named.template
+envsubst < templates/cobbler/etc/named.template.tmpl > cobbler/etc/named.template
 envsubst < templates/cobbler/etc/settings.tmpl > cobbler/etc/settings
 
 # Resolve provisioning templates
@@ -25,6 +25,13 @@ cobblerd
 cobbler get-loaders --force
 cp -a /var/lib/cobbler/loaders cobbler/var/
 
+
+# Make k8s packages
+cd kubernetes-distro-packages
+./build_kubernetes.sh
+./build_etcd.sh
+cd ..
+ 
 # Create partial mirror for cobbler installation
 mkdir -p ./cobbler-repo
 repotrack -a x86_64 -p ./cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
@@ -32,7 +39,8 @@ createrepo cobbler-repo/
 
 # Adds debian packages to Kubernetes repo
 mkdir -p ubuntu/repos/kubernetes
-reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes/builds/*.deb
+reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/kubernetes/builds/*.deb
+reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/etcd/builds/*.deb
 
 # Mirror Universe, 60 gigs...
 #./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe
@@ -47,9 +55,10 @@ reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kuberne
 # 
 
 # Create blank image. Should refactor this to happen right when everything's been downloaded for actual size estimate.
-dd if=/dev/zero of=${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME} bs=1M count=8000
+dd if=/dev/zero of=${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME} bs=1M count=10000
 
 # Creates loopback device for image.
+# TODO: We should also get the resulting loopback device to pass into make-centos-bootstick.
 kpartx -a ${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME}
 
 # Create usb image, this is a patched up thid party utility that needs to be refactored, and a PR sent back upstream.
