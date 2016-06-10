@@ -10,18 +10,22 @@ cp -a cobbler/var/* /var/lib/cobbler/
 sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
 
 # DO THE OTHER SEDDY THINGS.
+envsubst < templates/ks.cfg > ks.cfg
+envsubst < templates/cobbler/etc/dhcp.template.tmpl > cobbler/etc/dhcp.template
+envsubst < templates/cobbler/etc/named.templat.tmpl > cobbler/etc/named.template
+envsubst < templates/cobbler/etc/settings.tmpl > cobbler/etc/settings
 
 # Resolve provisioning templates
 
-#Start Cobbler
+# Start Cobbler
 httpd
 cobblerd
 
-#Download latest boot loaders
+# Download latest boot loaders
 cobbler get-loaders --force
 cp -a /var/lib/cobbler/loaders cobbler/var/
 
-#Create partial mirror for cobbler installation, this can be revised/updated by using ubuntu_required_packages.sh
+# Create partial mirror for cobbler installation
 mkdir -p ./cobbler-repo
 repotrack -a x86_64 -p ./cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
 createrepo cobbler-repo/
@@ -33,7 +37,7 @@ reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kuberne
 # Mirror Universe, 60 gigs...
 #./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe
 
-# Mirror just what we need from universe
+# Mirror just what we need from universe, this can be revised/updated by using ubuntu_required_packages.sh
 ./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe --exclude='/*'  --include=ceph-fs-common --include=gir1.2-libosinfo-1.0  --include=koan   --include=libosinfo-1.0-0  --include=python-ethtool --include=python-koan  --include=virtinst
 
 # Mirror Docker Repo

@@ -1,8 +1,7 @@
 FROM centos:7
 MAINTAINER Elson Rodriguez
 
-
-RUN yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo file ed patch
+RUN yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo file ed patch envsubst
 RUN yum install -y cobbler reprepro
 
 RUN yum install -y perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https 
