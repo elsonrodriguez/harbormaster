@@ -106,7 +106,7 @@ mount_parts() {
     mkdir -p BOOT && mount /dev/mapper/${dev}p1 BOOT
     mkdir -p DATA && mount /dev/mapper/${dev}p2 DATA
     mkdir -p DVD  && mount -t iso9660 -o loop $PWD/$iso    $PWD/DVD
-    mkdir -p ../ubuntu/install && mount -t iso9660 -o loop ../$ubuntuiso ../ubuntu/install
+    mkdir -p ../ubuntu/repos/install && mount -t iso9660 -o loop $ubuntuiso ../ubuntu/repos/install
 }
 
 make_boot() {
@@ -136,7 +136,7 @@ make_data() {
 }
 
 clean_up() {
-    umount ../$ubuntuiso
+    umount $ubuntuiso
     umount /dev/mapper/${dev}p1
     umount /dev/mapper/${dev}p2
     umount $iso
@@ -221,7 +221,7 @@ test -f $iso || fetch_iso
 
 require_unmounted
 partition
-kpartx -a ${OUTPUT_DIRECTORY}/${OUTPUT_FILENAME}
+kpartx -a ${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME}
 format_partitions
 write_mbr
 install_syslinux

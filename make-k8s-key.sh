@@ -1,12 +1,17 @@
 #!/bin/bash
 
+# Move files from container's staging directory to the build directory
 rsync -avc /source/ ${BUILD_DIRECTORY} 
 
 cd ${BUILD_DIRECTORY}
 cp -a cobbler/var/* /var/lib/cobbler/
 
+# Pass along proxy settings to the container's cobbler
 sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
-#AND DO THE OTHER SEDDY THINGS.
+
+# DO THE OTHER SEDDY THINGS.
+
+# Resolve provisioning templates
 
 #Start Cobbler
 httpd
@@ -40,6 +45,8 @@ reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kuberne
 # Create blank image. Should refactor this to happen right when everything's been downloaded for actual size estimate.
 dd if=/dev/zero of=${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME} bs=1M count=8000
 
+# Creates loopback device for image.
 kpartx -a ${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME}
-# Create usb image
+
+# Create usb image, this is a patched up thid party utility that needs to be refactored, and a PR sent back upstream.
 ./make-centos-bootstick -k ./ks.cfg -c ./syslinux.cfg -s ./k8splash.png loop0

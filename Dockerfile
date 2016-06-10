@@ -1,14 +1,15 @@
 FROM centos:7
 MAINTAINER Elson Rodriguez
 
-ADD . /source
-RUN chmod +x /source/*.sh
-RUN chmod +x /source/cobbler/bin/debmirror
 
-RUN yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo file
+RUN yum install -y syslinux dosfstools e2fsprogs parted epel-release createrepo file ed patch
 RUN yum install -y cobbler reprepro
 
 RUN yum install -y perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https 
+
+ADD . /source
+RUN chmod +x /source/*.sh
+RUN chmod +x /source/cobbler/bin/debmirror
 
 ENV K8S_VERSION 1.2.0
 ENV K8S_CLUSTER_IP_RANGE 192.168.0.0/16
