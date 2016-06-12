@@ -8,3 +8,17 @@
 mkdir -p /mirror/
 cp ubuntu/seeds /mirror/
 germinate -d xenial,xenial-updates  -a amd64 -c universe --no-installer   -s seeds -S file:///mirror/
+
+
+
+#another pattern
+apt-get --print-uris --yes install koan  | grep ^\' | cut -d\' -f2 >downloads.list
+
+#then just pass that download list to curl, and add the debian packages via reprepro.
+
+#for main packages, do a compare against the install media
+for i in `cat founddebs `; do basename $i ; done > founddebbase
+   22  cat founddebbase  | sort > sortedfound
+   23  cat test.debs  | sort > sortedneeded
+comm -3  sortedneeded  sortedfound 
+for i in `cat needed` ; do cat maindownloads | grep $i ; done

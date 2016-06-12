@@ -11,7 +11,7 @@ B<debmirror> [I<options>] I<mirrordir>
 
 =head1 DESCRIPTION
 
-This program downloads and maintains a partial local Debian mirror. It can
+This program downloads and maintains a partial local Ubuntu mirror. It can
 mirror any combination of architectures, distributions, and sections. Files
 are transferred by ftp, and package pools are fully supported. It also does
 locking and updates trace files.
@@ -26,7 +26,7 @@ This program mirrors in three steps.
 
 =item 1. download Packages and Sources files
 
-First it downloads all Packages and Sources files for the subset of Debian it
+First it downloads all Packages and Sources files for the subset of Ubuntu it
 was instructed to get.
 
 =item 2. download everything else
@@ -65,7 +65,7 @@ EOF
 This required (unless defined in a configuration file) parameter specifies
 where the local mirror directory is. If the directory does not exist, it will
 be created. Be careful; telling this program that your home directory is the
-mirrordir is guaranteed to replace your home directory with a Debian mirror!
+mirrordir is guaranteed to replace your home directory with an Ubuntu mirror!
 
 =item B<-p>, B<--progress>
 
@@ -85,19 +85,23 @@ Simulate a mirror run. This will still download the meta files to the
 F<./.temp> working directory, but won't replace the old meta files, won't
 download debs and source files and only simulates cleanup.
 
+=item B<--skip-installer>=I<foo[,bar,..]>
+
+Don't download debian-installer files for the specified distribution.
+
 =item B<--help>
 
 Display a usage summary.
 
 =item B<-h>, B<--host>=I<remotehost>
 
-Specify the remote host to mirror from. Defaults to I<ftp.debian.org>,
+Specify the remote host to mirror from. Defaults to I<archive.ubuntu.com>,
 you are strongly encouraged to find a closer mirror.
 
 =item B<-r>, B<--root>=I<directory>
 
-Specifies the directory on the remote host that is the root of the Debian
-archive. Defaults to F<debian>, which will work for most mirrors. The root
+Specifies the directory on the remote host that is the root of the Ubuntu
+archive. Defaults to F<ubuntu>, which will work for most mirrors. The root
 directory has a F<dists> subdirectory.
 
 =item B<--method>=I<method>
@@ -126,7 +130,7 @@ Specifies the http proxy (like Squid) to use for http or ftp methods.
 
 =item B<-d>, B<--dist>=I<foo[,bar,..]>
 
-Specify the distribution (etch, lenny, squeeze, sid) of Debian to
+Specify the distribution (lucid, oneiric, precise) of Ubuntu to
 mirror. This switch may be used multiple times, and multiple
 distributions may be specified at once, separated by commas.
 
@@ -142,7 +146,7 @@ suite in their F<Release> files.
 
 =item B<-s>, B<--section>=I<foo[,bar,..]>
 
-Specify the section of Debian to mirror. Defaults to
+Specify the section of Ubuntu to mirror. Defaults to
 C<main,contrib,non-free,main/debian-installer>.
 
 =item B<-a>, B<--arch>=I<foo[,bar,..]>
@@ -323,7 +327,7 @@ Download at most number of files with each rsync call and then loop.
 =item B<--rsync-options>=I<options>
 
 Specify alternative rsync options to be used. Default options are
-"-aIL --partial". Care must be taken when specifying alternative
+"-aL --partial". Care must be taken when specifying alternative
 options not to disrupt operations, it's best to only add to those
 options.
 
@@ -530,11 +534,11 @@ settings defined in F<debmirror.conf>):
 
   debmirror /srv/mirror/debian
 
-Make a mirror of i386 and sparc binaries, main only, and include both unstable
-and testing versions of Debian; download from 'ftp.kernel.org':
+Make a mirror of i386 and amd64 binaries, main and universe only, and include
+both LTS and latest versions of Ubuntu; download from 'archive.ubuntu.com':
 
-  debmirror -a i386,sparc -d sid -d etch -s main --nosource \
-            -h ftp.nl.debian.org --progress $HOME/mirror/debian
+  debmirror -a i386,amd64 -d lucid -d precise -s main,universe --nosource \
+            -h archive.ubuntu.com --progress $HOME/mirror/debian
 
 Make a mirror using rsync (rsync server is 'ftp.debian.org::debian'),
 excluding the section 'debug' and the package 'foo-doc':
@@ -561,15 +565,15 @@ excluding the section 'debug' and the package 'foo-doc':
     with debmirror's --keyring option -- see above).
 
     To add the right key to this keyring you can import it from the
-    debian keyring (in case of the debian archive) using:
+    ubuntu keyring (in case of the Ubuntu archive) using:
 
-      gpg --keyring /usr/share/keyrings/debian-archive-keyring.gpg --export \
+      gpg --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --export \
           | gpg --no-default-keyring --keyring trustedkeys.gpg --import
 
     or download the key from a keyserver:
 
       gpg --no-default-keyring --keyring trustedkeys.gpg \
-          --keyserver keyring.debian.org --recv-keys <key ID>
+          --keyserver keyserver.ubuntu.com --recv-keys <key ID>
 
     The <key ID> can be found in the gpgv error message in debmirror:
     gpgv: Signature made Tue Jan 23 09:07:53 2007 CET using DSA key ID 2D230C5F
@@ -597,7 +601,7 @@ our $mirrordir;
 our @config_files;
 our ($debug, $progress, $verbose, $passive, $skippackages, $getcontents, $i18n);
 our ($ua, $proxy, $ftp);
-our (@dists, @sections, @arches, @ignores, @excludes, @includes, @keyrings);
+our (@dists, @sections, @arches, @ignores, @excludes, @includes, @keyrings, @skip_installer);
 our (@excludes_deb_section, @limit_priority);
 our (%excludes_field, %includes_field);
 our (@di_dists, @di_arches, @rsync_extra);
@@ -607,14 +611,14 @@ our $pre_cleanup=0;
 our $post_cleanup=1;
 our $no_cleanup=0;
 our $do_source=1;
-our $host="ftp.debian.org";
+our $host="archive.ubuntu.com";
 our $user="anonymous";
 our $passwd="anonymous@";
-our $remoteroot="debian";
+our $remoteroot="ubuntu";
 our $download_method="ftp";
 our $timeout=300;
 our $max_batch=0;
-our $rsync_batch=200;
+our $rsync_batch=300;
 our $num_errors=0;
 our $bytes_to_get=0;
 our $bytes_gotten=0;
@@ -625,7 +629,7 @@ our $ignore_release_gpg=0;
 our $start_time = time;
 our $dry_run=0;
 our $do_dry_run=0;
-our $rsync_options="-aIL --partial";
+our $rsync_options="-aL --partial";
 our $ignore_small_errors=0;
 our $diff_mode="use";
 our $gzip_options="-9 -n --rsyncable";
@@ -641,6 +645,9 @@ our $retry_rsync_packages_delay=30; # seconds
 my @errlog;
 my $HOME;
 ($HOME = $ENV{'HOME'}) or die "HOME not defined in environment!\n";
+
+# Switch to auto-flushing mode for stdout.
+select STDOUT; $|=1;
 
 # Load in config files first so options can override them.
 Getopt::Long::Configure qw(pass_through);
@@ -726,6 +733,7 @@ GetOptions('debug'                  => \$debug,
            'postcleanup'            => \$post_cleanup,
            'nocleanup'              => \$no_cleanup,
            'ignore=s'               => \@ignores,
+           'skip-installer=s'       => \@skip_installer,
            'exclude=s'              => \@excludes,
            'exclude-deb-section=s'  => \@excludes_deb_section,
            'limit-priority=s'       => \@limit_priority,
@@ -795,9 +803,9 @@ $remoteroot =~ s%^[:/]%% unless downloads_via_file();
 # Post-process arrays. Allow commas to separate values the user entered.
 # If the user entered nothing, provide defaults.
 @dists=split(/,/,join(',',@dists));
-@dists=qw(sid) unless @dists;
+@dists=qw(precise) unless @dists;
 @sections=split(/,/,join(',',@sections));
-@sections=qw(main contrib non-free main/debian-installer) unless @sections;
+@sections=qw(main main/debian-installer universe restricted multiverse) unless @sections;
 @arches=split(/,/,join(',',@arches));
 @arches=qw(i386) unless @arches;
 @arches=() if (join(',',@arches) eq "none");
@@ -822,6 +830,8 @@ $pre_cleanup=0 if ($debmarshal);
 $post_cleanup=0 if ($no_cleanup);
 $post_cleanup=0 if ($pre_cleanup);
 $post_cleanup=0 if ($debmarshal);
+@skip_installer=split(/,/,join(',',@skip_installer));
+@skip_installer=() unless @skip_installer;
 
 # Display configuration.
 $|=1 if $debug;
@@ -1391,12 +1401,16 @@ sub batch_get {
     my @result;
     my $i=0;
     my $j=0;
+    my @tofetch;
     $opt .= " --progress" if $progress;
     $opt .= " -v" if $verbose or $debug;
     $opt .= " -n" if $do_dry_run;
     $opt .= " --no-motd" unless $verbose;
     foreach my $file (sort keys %files) {
-      if (!$files{$file}) {
+      push(@tofetch, $file) if (!$files{$file});
+    }
+    my $last = scalar(@tofetch);
+    foreach my $file (@tofetch) {
         my $dirname;
         my @dir;
         ($dirname) = $file =~ m:(.*/):;
@@ -1405,7 +1419,10 @@ sub batch_get {
           push (@result, "" . join('/', @dir[0..$_]) . "/");
         }
         push (@result, "$file");
-        if (++$j >= $rsync_batch) {
+        $i++;
+        $j++;
+        say("want $file ($i/$last $j/$rsync_batch)") if ($progress || $verbose);
+        if ($j >= $rsync_batch || $i == $last) {
           $j = 0;
           ($fh, $rsynctempfile) = tempfile();
           if (@result) {
@@ -1448,35 +1465,12 @@ sub batch_get {
           }
           @result = ();
         }
-        if ($max_batch > 0 && ++$i >= $max_batch) {
+        if ($max_batch > 0 && ($i + 1) >= $max_batch) {
           print "Batch limit exceeded, mirror run will be partial\n";
           push (@errlog,"Batch limit exceeded, mirror run was partial\n");
           $num_errors++;
           last;
         }
-      }
-    }
-    ($fh, $rsynctempfile) = tempfile();
-    if (@result) {
-      @result = sort(@result);
-      my $prev = "not equal to $result[0]";
-      @result = grep($_ ne $prev && ($prev = $_, 1), @result);
-      for (@result) {
-        print $fh "$_\n";
-      }
-      system ("rsync --timeout=$timeout $opt $rsyncremote --include-from=$rsynctempfile --exclude='*' $mirrordir");
-      close $fh;
-      foreach my $dest (@result) {
-        if (-f $dest) {
-          if (!check_lists($dest)) {
-            say("$dest failed checksum verification");
-            $num_errors++;
-          }
-        } elsif (!-d $dest) {
-          say("$dest missing");
-          $num_errors++;
-        }
-      }
     }
     return;
   }
@@ -1492,7 +1486,7 @@ if ($debmarshal) {
 }
 chdir($tempdir) or die "unable to chdir($tempdir): $!\n";
 my $res=0;
-foreach my $file (`find . -type f`) {
+foreach my $file (`find . -type f 2>/dev/null`) {
   chomp $file;
   $file=~s:^\./::;
   # this skips diff files if unwanted
@@ -1567,7 +1561,7 @@ if (! $use_cache && ($pre_cleanup || $post_cleanup)) {
   # makes directories.. Sort so they are removable in bottom-up
   # order.
   chdir($mirrordir) or die "chdir $mirrordir: $!";
-  system("find . -depth -type d ! -name . ! -name .. -print0 | xargs -0 rmdir 2>/dev/null") if (! $do_dry_run);
+  system("find . -depth -type d ! -name . ! -name .. -print0 2>/dev/null | xargs -0 rmdir 2>/dev/null") if (! $do_dry_run);
 }
 
 if ($res != 0) {
@@ -1644,6 +1638,7 @@ sub check_file {
   my %params=@_;
   my ($filename, $size)=delete @params{qw{filename size}};
   if (! -f $filename) {
+    say("Missing: $filename") if ($verbose);
     return 0;
   }
   my $disksize = -s _;
@@ -1673,10 +1668,15 @@ sub check_file {
       open HANDLE, $filename or die "$filename: $!";
       $summer->addfile(*HANDLE);
       return 1 if $checksum eq $summer->hexdigest;
+      say(sprintf("Mismatch '$filename': sum is %s, expected %s", $summer->hexdigest, $checksum))
+        if ($verbose);
     }
     else {
       return 1;
     }
+  }
+  elsif ($verbose) {
+    say(sprintf("Mismatch '$filename': size is %d, expected %d", $disksize, $size));
   }
   return 0;
 }
@@ -2473,7 +2473,7 @@ sub i18n_from_release {
     next if substr($path, 0, length($compdir)) ne $compdir;
 
     my $filename = substr($path, length($compdir)+1, length($path)-length($compdir)-1);
-    next if $filename !~ /bz2$/;
+    next if $filename !~ /\.(?:gz|bz2|xz)$/;
 
     if(!(defined($include) && ($subdir."/".$filename)=~/$include/o)) {
       next if (defined($exclude) && ($subdir."/".$filename)=~/$exclude/o);
@@ -2693,7 +2693,7 @@ sub cleanup_unknown_files {
     my $ignore;
     $ignore = "(".join("|", @ignores).")" if @ignores;
     # Remove all files in the mirror that we don't know about
-    foreach my $file (`find . -type f`) {
+    foreach my $file (`find . -type f 2>/dev/null`) {
       chomp $file;
       $file=~s:^\./::;
       next if (@di_dists && $file =~ m:installer-\w(-|\w)*/current/images/:);
@@ -2710,11 +2710,15 @@ sub cleanup_unknown_files {
   di_cleanup() if @di_dists;
 }
 
+# Figure out whether debian-installer should be skipped for a given dist.
+my %skip_installer=("woody" => 1, "experimental" => 1);
+foreach my $skipped_dist (@skip_installer) {
+  $skip_installer{$skipped_dist} = 1;
+}
+
 sub di_skip_dist {
   my $dist=shift;
-  if ( $dist eq "woody" ||
-       $dist eq "experimental" ||
-       $dist =~ /.*-updates/ ) {
+  if ( defined($skip_installer{$dist}) ) {
     return 1;
   }
   return 0;
@@ -2835,11 +2839,11 @@ sub di_get_files {
 
 sub di_cleanup {
   # Clean up obsolete files
-  foreach my $image_dir (`find dists/ -type d -name images`) {
+  foreach my $image_dir (`find dists/ -type d -name images 2>/dev/null`) {
     next unless $image_dir =~ m:/installer-\w(-|\w)*/current/images$:;
     chomp $image_dir;
     chdir("$image_dir") or die "unable to chdir($image_dir): $!\n";
-    foreach my $file (`find . -type f`) {
+    foreach my $file (`find . -type f 2>/dev/null`) {
       chomp $file;
       $file=~s:^\./::;
       if (! exists $di_files{$image_dir} || ! exists $di_files{$image_dir}{$file}) {
@@ -2855,7 +2859,7 @@ sub di_cleanup {
   # Clean up temporary D-I files (silently)
   if (-d "$tempdir/d-i") {
     chdir("$tempdir/d-i") or die "unable to chdir($tempdir/d-i): $!\n";
-    foreach my $file (`find . -type f`) {
+    foreach my $file (`find . -type f 2>/dev/null`) {
       chomp $file;
       $file=~s:^\./::;
       unlink "$file" or die "unlink $tempdir/d-i/$file: $!\n";
@@ -3059,7 +3063,7 @@ copyright 2015 by Thaddeus H. Black <thb@debian.org>, and copyright 2016
 by Colin Watson <cjwatson@debian.org>.
 
 The author disclaims any responsibility for any mangling of your system,
-unexpected bandwidth usage bills, meltdown of the Debian mirror network,
+unexpected bandwidth usage bills, meltdown of the Debian/Ubuntu mirror network,
 etc, that this script may cause. See NO WARRANTY section of GPL.
 
 =head1 AUTHOR
