@@ -12,10 +12,11 @@ ADD . /source
 RUN chmod +x /source/*.sh
 RUN chmod +x /source/cobbler/bin/debmirror
 
-RUN git clone https://github.com/kismatic/kubernetes-distro-packages.git /source/kubernetes-distro-packages
+RUN git clone https://github.com/elsonrodriguez/kubernetes-distro-packages.git /source/kubernetes-distro-packages
 WORKDIR  /source/kubernetes-distro-packages
-RUN git reset --hard 44cf7451f6534afb8953c3a6f4a552c47ae9f0b7
+RUN git reset --hard 142d55a43590415353a617de41555618c8c4925c 
 
+ENV K8S_CLEAN_BUILD false
 ENV K8S_VERSION 1.3.0-alpha.5
 ENV K8S_CLUSTER_IP_RANGE 192.168.0.0/16
 ENV K8S_NODE_POD_CIDR 10.244
@@ -28,6 +29,8 @@ ENV NETWORK_DOMAIN harbor0.group.company.com
 ENV NETWORK_BOOTP_START 172.16.101.5
 ENV NETWORK_BOOTP_END 172.16.101.254
 ENV NETWORK_NETMASK 255.255.0.0
+#Need to figure out why we need this...
+ENV NETWORK_NETMASK2 255.255.255.0
 ENV NETWORK_SUBNET 172.16.101.0
 ENV NETWORK_UPSTREAMDNS 8.8.8.8
 ENV NETWORK_DNS_REVERSE 172.16.101

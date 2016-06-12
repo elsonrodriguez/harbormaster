@@ -18,7 +18,7 @@ set vendorclass = option vendor-class-identifier;
 
 option pxe-system-type code 93 = unsigned integer 16;
 
-subnet ${NETWORK_SUBNET} netmask ${NETWORK_NETMASK} {
+subnet ${NETWORK_SUBNET} netmask ${NETWORK_NETMASK2} {
      option routers             ${NETWORK_ROUTER};
      option domain-name-servers ${COBBLER_IP};
      option subnet-mask         ${NETWORK_NETMASK};
