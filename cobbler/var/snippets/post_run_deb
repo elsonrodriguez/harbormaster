@@ -1,0 +1,10 @@
+# A general purpose snippet to add late-command actions for preseeds
+apt-get update
+apt-get install -y --allow-unauthenticated koan
+# etcd kubernetes-master docker-engine for master
+# docker-engine socat kubernetes-node ceph-fs-common for nodes
+apt-get install -y --allow-unauthenticated $extra_packages 
+systemctl enable docker 
+# etcd kube-apiserver kube-controller-manager kube-scheduler for master
+# docker kubelet kubeproxy for node
+systemctl enable $extra_services 
