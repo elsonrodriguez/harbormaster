@@ -41,8 +41,8 @@ createrepo cobbler-repo/
 
 # Adds debian packages to Kubernetes repo
 mkdir -p ubuntu/repos/kubernetes
-reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/kubernetes/builds/*.deb
-reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/etcd/builds/*.deb
+reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/kubernetes/builds/systemd/*.deb
+reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/etcd/builds/systemd/*.deb
 
 # Partial mirror of main
 mkdir main-mirror

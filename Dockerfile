@@ -14,7 +14,7 @@ RUN chmod +x /source/cobbler/bin/debmirror
 
 RUN git clone https://github.com/elsonrodriguez/kubernetes-distro-packages.git /source/kubernetes-distro-packages
 WORKDIR  /source/kubernetes-distro-packages
-RUN git reset --hard 142d55a43590415353a617de41555618c8c4925c 
+RUN git reset --hard d45e982e0710bfefedac524649cc32cd64426a39
 
 ENV K8S_CLEAN_BUILD false
 ENV K8S_VERSION 1.3.0-alpha.5
