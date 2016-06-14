@@ -69,6 +69,8 @@ apt-get download koan && apt-cache depends -i koan | awk '/Depends:/ {print $2}'
 
 #germinate -d xenial,xenial-updates  -a amd64 -c universe --no-installer   -s seeds -S file:///germ/
 
+#VBoxManage convertfromraw harbormaster.img harbormaster.vmdk --format VMDK
+
 
 Custom repo needs:
 - Docker
