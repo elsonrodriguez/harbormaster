@@ -1,0 +1,4 @@
+## This is needed because this is called via curl from preseed. has to be a better way.
+## Also the dhcp hostname override in preseed should just work.
+#set global $myhostname = "master" + "." + $manage_forward_zones[0]
+#set global $hostname = $myhostname

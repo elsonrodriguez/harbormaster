@@ -1,0 +1,2 @@
+echo "$hostname" > /etc/hostname
+/bin/hostname $hostname

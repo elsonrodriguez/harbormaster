@@ -1,0 +1,11 @@
+# Start preseed_late_default
+# This script runs in the chroot /target by default
+$SNIPPET('kubernetes_master_hostname')
+$SNIPPET('force_hostname')
+$SNIPPET('post_install_network_config_deb')
+$SNIPPET('late_apt_repo_config')
+$SNIPPET('post_run_deb')
+$SNIPPET('download_config_files')
+$SNIPPET('cobbler_register')
+$SNIPPET('kickstart_done')
+# End preseed_late_default

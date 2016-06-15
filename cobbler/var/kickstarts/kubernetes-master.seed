@@ -12,11 +12,11 @@ d-i keyboard-configuration/variantcode string
 
 # netcfg will choose an interface that has link if possible. This makes it
 # skip displaying a list if there is more than one interface.
-#set global $hostname = "master" + "." + $manage_forward_zones[0]
-
+#set global $myhostname = "master" + "." + $manage_forward_zones[0]
+## So, none of this works. debian preseed overrides your hostname, and netcfg/hostname doesn't work to override the override. This is why there's a series of hacks in snippets to force the hostname.
 d-i netcfg/choose_interface select auto
-d-i netcfg/get_hostname string $hostname
-d-i netcfg/hostname string $hostname
+d-i netcfg/get_hostname string $myhostname
+d-i netcfg/hostname string $myhostname
 
 # If non-free firmware is needed for the network or other hardware, you can
 # configure the installer to always try to load it, without prompting. Or
@@ -145,5 +145,5 @@ d-i preseed/early_command string wget -O- \
 # packages and run commands in the target system.
 # d-i preseed/late_command string [command]
 d-i preseed/late_command string wget -O- \
-   http://$http_server/cblr/svc/op/script/$what/$name/?script=preseed_late_default | \
+   http://$http_server/cblr/svc/op/script/$what/$name/?script=preseed_late_kubernetes_master | \
    chroot /target /bin/sh -s

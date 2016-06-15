@@ -39,6 +39,8 @@ mkdir -p ./cobbler-repo
 repotrack -a x86_64 -p ./cobbler-repo/ ipxe-bootimgs cobbler cobbler-web perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https
 createrepo cobbler-repo/
 
+#TODO: There's about 2.5 patterns here for mirroring a debian repo. need to pick one, and automate the generation of the partial mirror dependencies here in this image.
+
 # Adds debian packages to Kubernetes repo
 mkdir -p ubuntu/repos/kubernetes
 reprepro -b ubuntu/repos/kubernetes includedeb xenial ${BUILD_DIRECTORY}/kubernetes-distro-packages/kubernetes/builds/systemd/*.deb

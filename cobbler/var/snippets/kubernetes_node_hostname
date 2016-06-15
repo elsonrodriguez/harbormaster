@@ -1,0 +1,6 @@
+## This is needed because this is called via curl from preseed. has to be a better way.
+## Also the dhcp hostname override in preseed should just work.
+#import uuid
+#set $randomid = str(uuid.uuid4()).split("-")[0]
+#set global $myhostname = "node" + "-" + $randomid + "." + $manage_forward_zones[0]
+#set global $hostname = $myhostname
