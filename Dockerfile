@@ -6,7 +6,7 @@ RUN yum install -y cobbler reprepro
 
 RUN yum install -y perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https 
 
-RUN gem install fpm
+RUN gem install fpm -v 1.6.1
 
 ADD . /source
 RUN chmod +x /source/*.sh
@@ -14,7 +14,7 @@ RUN chmod +x /source/cobbler/bin/debmirror
 
 RUN git clone https://github.com/elsonrodriguez/kubernetes-distro-packages.git /source/kubernetes-distro-packages
 WORKDIR  /source/kubernetes-distro-packages
-RUN git reset --hard d45e982e0710bfefedac524649cc32cd64426a39
+RUN git reset --hard 6dca0c48177c192b8b74d2455f726cf95fc29a12
 
 ENV K8S_CLEAN_BUILD false
 ENV K8S_VERSION 1.3.0-alpha.5
