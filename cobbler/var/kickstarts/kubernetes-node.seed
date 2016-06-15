@@ -14,10 +14,10 @@ d-i keyboard-configuration/variantcode string
 # skip displaying a list if there is more than one interface.
 #import uuid
 #set $randomid = str(uuid.uuid4()).split("-")[0]
-#set $myhostname = "node" + "-" + $randomid + "." + $manage_forward_zones[0]
+#set global $hostname = "node" + "-" + $randomid + "." + $manage_forward_zones[0]
 d-i netcfg/choose_interface select auto
-d-i netcfg/get_hostname string $myhostname
-d-i netcfg/hostname string $myhostname
+d-i netcfg/get_hostname string $hostname
+d-i netcfg/hostname string $hostname
 
 # If non-free firmware is needed for the network or other hardware, you can
 # configure the installer to always try to load it, without prompting. Or
