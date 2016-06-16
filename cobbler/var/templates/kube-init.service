@@ -4,7 +4,7 @@ After=kube-apiserver.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/kubectl create -f /etc/kubernetes/manifests/*.yaml
+ExecStart=/usr/bin/kubectl create -f /etc/kubernetes/manifests/
 
 [Install]
 WantedBy=multi-user.target

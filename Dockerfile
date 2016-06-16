@@ -22,11 +22,10 @@ ENV K8S_CLUSTER_IP_RANGE 10.254.0.0/16
 ENV K8S_SKYDNS_CLUSTERIP 10.254.0.10
 ENV K8S_NODE_POD_CIDR 10.244
 
+# TODO: grab ip information as a cidr and infer the other variables.
 ENV COBBLER_IP 172.16.101.100
 
-# TODO: grab ip information as a cidr and infer the other variables.
-
-ENV NETWORK_ROUTER 172.16.101.2
+ENV NETWORK_GATEWAY 172.16.101.2
 ENV NETWORK_DOMAIN harbor0.group.company.com
 ENV NETWORK_BOOTP_START 172.16.101.5
 ENV NETWORK_BOOTP_END 172.16.101.254

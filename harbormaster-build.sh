@@ -10,14 +10,12 @@ cp -a cobbler/var/* /var/lib/cobbler/
 sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
 
 # DO THE OTHER SEDDY THINGS.
-REPLACE_VARS='$K8S_CLEAN_BUILD:$K8S_VERSION:$K8S_CLUSTER_IP_RANGE:$K8S_NODE_POD_CIDR:$COBBLER_IP:$NETWORK_ROUTER:$NETWORK_DOMAIN:$NETWORK_BOOTP_START:$NETWORK_BOOTP_END:$NETWORK_NETMASK:$NETWORK_SUBNET:$NETWORK_UPSTREAMDNS:$NETWORK_DNS_REVERSE:$NUM_MASTERS:$NETWORK_NETMASK2:$HTTP_PROXY:$K8S_SKYDNS_CLUSTERIP'
+REPLACE_VARS='$K8S_CLEAN_BUILD:$K8S_VERSION:$K8S_CLUSTER_IP_RANGE:$K8S_NODE_POD_CIDR:$COBBLER_IP:$NETWORK_GATEWAY:$NETWORK_DOMAIN:$NETWORK_BOOTP_START:$NETWORK_BOOTP_END:$NETWORK_NETMASK:$NETWORK_SUBNET:$NETWORK_UPSTREAMDNS:$NETWORK_DNS_REVERSE:$NUM_MASTERS:$NETWORK_NETMASK2:$HTTP_PROXY:$K8S_SKYDNS_CLUSTERIP'
 
 envsubst "$REPLACE_VARS" < templates/ks.cfg > ks.cfg
 envsubst "$REPLACE_VARS" < templates/cobbler/etc/dhcp.template.tmpl > cobbler/etc/dhcp.template
 envsubst "$REPLACE_VARS" < templates/cobbler/etc/named.template.tmpl > cobbler/etc/named.template
 envsubst "$REPLACE_VARS" < templates/cobbler/etc/settings.tmpl > cobbler/etc/settings
-
-# Resolve provisioning templates
 
 # Start Cobbler
 httpd
@@ -26,7 +24,6 @@ cobblerd
 # Download latest boot loaders
 cobbler get-loaders --force
 cp -a /var/lib/cobbler/loaders cobbler/var/
-
 
 # Make k8s packages
 cd kubernetes-distro-packages
@@ -56,7 +53,7 @@ reprepro -b ubuntu/repos/main includedeb xenial ${BUILD_DIRECTORY}/main-mirror/*
 # Mirror Universe, 60 gigs...
 #./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe
 
-# Mirror just what we need from universe, this can be revised/updated by using ubuntu_required_packages.sh
+# Mirror just what we need from universe, notes for doing this are in ubuntu_required_packages.sh
 ./cobbler/bin/debmirror -v -p -t 5 --no-check-gpg -h archive.ubuntu.com --i18n -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe/ --exclude-field=Package='*' --include-field=Package="ceph-fs-common|gir1.2-libosinfo|koan|python-ethtool|python-koan|virt-manager|gtk-vnc|libgvnc|libgtk-vnc|spice-gtk|spice-client|libgtk-vnc|virt-viewer|libspice|virtinst|cobbler|libosinfo|virt-viewer|socat|aufs|cgroup"
 
 # Mirror Docker Repo
@@ -77,4 +74,3 @@ kpartx -a ${OUTPUT_DIRECTORY}/${OUTPUT_IMAGE_NAME}
 
 # Clean up all loopback devices
 dmsetup remove_all
-
