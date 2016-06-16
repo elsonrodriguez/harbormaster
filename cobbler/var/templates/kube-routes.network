@@ -1,0 +1,6 @@
+[Route]
+Destination=10.101.10.0/24
+Gateway=172.16.101.10
+[Route]
+Destination=10.101.11.0/24
+Gateway=172.16.101.11
