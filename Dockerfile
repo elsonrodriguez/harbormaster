@@ -16,6 +16,8 @@ RUN git clone https://github.com/elsonrodriguez/kubernetes-distro-packages.git /
 WORKDIR  /source/kubernetes-distro-packages
 RUN git reset --hard d4be861171e6073f9060da0c86d09aef47a595a3
 
+ENV ENABLE_PROXY false
+
 ENV K8S_CLEAN_BUILD false
 ENV K8S_VERSION 1.3.0-alpha.5
 ENV K8S_CLUSTER_IP_RANGE 10.254.0.0/16
