@@ -10,12 +10,14 @@ cp -a cobbler/var/* /var/lib/cobbler/
 sed -i 's@proxy_url_ext: ""@proxy_url_ext: "'${HTTP_PROXY}'"@g' /etc/cobbler/settings
 
 # DO THE OTHER SEDDY THINGS.
-REPLACE_VARS='$K8S_CLEAN_BUILD:$K8S_VERSION:$K8S_CLUSTER_IP_RANGE:$K8S_NODE_POD_CIDR:$COBBLER_IP:$NETWORK_GATEWAY:$NETWORK_DOMAIN:$NETWORK_BOOTP_START:$NETWORK_BOOTP_END:$NETWORK_NETMASK:$NETWORK_SUBNET:$NETWORK_UPSTREAMDNS:$NETWORK_DNS_REVERSE:$NUM_MASTERS:$NETWORK_NETMASK2:$HTTP_PROXY:$K8S_SKYDNS_CLUSTERIP:$ENABLE_PROXY'
+REPLACE_VARS='$K8S_CLEAN_BUILD:$K8S_VERSION:$K8S_CLUSTER_IP_RANGE:$K8S_NODE_POD_CIDR:$COBBLER_IP:$NETWORK_GATEWAY:$NETWORK_DOMAIN:$NETWORK_BOOTP_START:$NETWORK_BOOTP_END:$NETWORK_NETMASK:$NETWORK_SUBNET:$NETWORK_UPSTREAMDNS:$NETWORK_DNS_REVERSE:$NUM_MASTERS:$NETWORK_NETMASK2:$HTTP_PROXY:$K8S_SKYDNS_CLUSTERIP:$ENABLE_PROXY:$HTTP_PROXY:$HTTPS_PROXY:$SOCKS_PROXY:$NO_PROXY:$FTP_PROXY'
 
-envsubst "$REPLACE_VARS" < templates/ks.cfg > ks.cfg
+envsubst "$REPLACE_VARS" < templates/ks.cfg.tmpl > ks.cfg
 envsubst "$REPLACE_VARS" < templates/cobbler/etc/dhcp.template.tmpl > cobbler/etc/dhcp.template
 envsubst "$REPLACE_VARS" < templates/cobbler/etc/named.template.tmpl > cobbler/etc/named.template
 envsubst "$REPLACE_VARS" < templates/cobbler/etc/settings.tmpl > cobbler/etc/settings
+envsubst "$REPLACE_VARS" < templates/cobbler/var/templates/docker-proxy.conf.tmpl > cobbler/var/templates/docker-proxy.conf
+envsubst "$REPLACE_VARS" < templates/cobbler/var/templates/proxy-settings.sh.tmpl > cobbler/var/templates/proxy-settings.sh
 
 # Start Cobbler
 httpd

@@ -6,6 +6,7 @@ options {
           memstatistics-file "/var/named/data/named_mem_stats.txt";
           allow-query     { any; };
           recursion yes;
+          forwarders { $NETWORK_UPSTREAMDNS; };
 };
 
 logging {
