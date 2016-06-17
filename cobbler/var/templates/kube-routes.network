@@ -1,6 +1,11 @@
+#from netaddr import iter_iprange
+#set node_address = $interfaces.itervalues().next()['ip_address']
+
+#for $ip_addr in iter_iprange("172.16.101.5","172.16.101.254")
+  #if $node_address != str($ip_addr)
+  #set subrange = str($ip_addr).split(".",2)[2]
 [Route]
-Destination=10.101.10.0/24
-Gateway=172.16.101.10
-[Route]
-Destination=10.101.11.0/24
-Gateway=172.16.101.11
+Destination=10.$subrange.0/24
+Gateway=$ip_addr
+  #end if
+#end for
