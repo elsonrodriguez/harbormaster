@@ -3,8 +3,9 @@ Description=Kubernetes Cluster Initialization
 After=kube-apiserver.service
 
 [Service]
-Type=oneshot
 ExecStart=/usr/bin/kubectl create -f /etc/kubernetes/manifests/
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

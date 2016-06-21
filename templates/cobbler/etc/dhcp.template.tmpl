@@ -20,8 +20,11 @@ option pxe-system-type code 93 = unsigned integer 16;
 
 subnet ${NETWORK_SUBNET} netmask ${NETWORK_NETMASK} {
      option routers             ${NETWORK_GATEWAY};
-     option domain-name-servers ${K8S_SKYDNS_CLUSTERIP}, ${COBBLER_IP};
-     option domain-search       "svc.${NETWORK_DOMAIN}", "${NETWORK_DOMAIN}";
+##TODO Need to figure out domain delegation instead, this isn't going to cut it.
+##     option domain-name-servers ${K8S_SKYDNS_CLUSTERIP}, ${COBBLER_IP};
+##     option domain-search       "svc.${NETWORK_DOMAIN}", "${NETWORK_DOMAIN}";
+     option domain-name-servers ${COBBLER_IP};
+     option domain-search       "${NETWORK_DOMAIN}";
      option subnet-mask         ${NETWORK_NETMASK};
      range dynamic-bootp        ${NETWORK_BOOTP_START} ${NETWORK_BOOTP_END};
      default-lease-time         21600;

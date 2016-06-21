@@ -1,9 +1,3 @@
-# (c) 2008-2009
-# Jeff Schroeder <jeffschroeder@computer.org>
-# Michael DeHaan <michael.dehaan AT gmail>
-#
-# License: GPLv2+
-
 import distutils.sysconfig
 import sys
 import os
@@ -25,7 +19,11 @@ def register():
    return "/var/lib/cobbler/triggers/add/system/post/*"
 
 def run(api, args, logger):
-    # FIXME: make everything use the logger
+    # This will set the default to "node" after the first master is provisioned.
+    # Need better logic for setting number of masters.
+    default_system = api.find_system("default")
+    default_system.set_profile("kubernetes-node")
+
     api.sync()
 
     return 0

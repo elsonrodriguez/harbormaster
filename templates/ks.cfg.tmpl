@@ -1,13 +1,24 @@
+%pre
+export osdisk=$(find /dev/disk/by-path/ -name '$ROOT_DISK_PATH_PATTERN' -printf "%P" -quit)
+
+if [ -z "$osdir" ]; then
+  export osdisk="sda"
+fi
+
+echo "ignoredisk --only-use=$osdisk" > /tmp/partition_table
+echo "zerombr" >> /tmp/partition_table
+echo "clearpart --all --drives=$osdisk --initlabel" >> /tmp/partition_table
+echo "part / --size 4096 --grow --fstype xfs --ondisk=$osdisk" >> /tmp/partition_table
+%end
+
 install
 url --url=file:///run/install/repo
 skipx
 text
 rootpw default
 
-ignoredisk --only-use=sda
-zerombr
-clearpart --all --drives=sda --initlabel
-part / --size 4096 --grow --fstype xfs --ondisk=sda
+#ignoredisk --drives=/dev/disk/by-label/BOOT
+%include /tmp/partition_table
 
 network --bootproto=static --ip=${COBBLER_IP} --netmask=${NETWORK_NETMASK} --gateway=${NETWORK_GATEWAY} --nameserver=${COBBLER_IP} --hostname=harbormaster.${NETWORK_DOMAIN}
 
@@ -67,6 +78,9 @@ cp -a /run/install/isodir/ubuntu /mnt/sysimage/var/lib/
 httpd
 cobblerd
 
+#sometimes cobblerd isn't up in time, terrible hack, but meh.
+sleep 10
+
 #mount -o loop /mnt/install/isodir/ubuntu/ubuntu-16.04-server-amd64.iso /mnt/ubuntu
 cobbler import --name=ubuntu-server-16.04 --path=/var/lib/ubuntu/repos/install --breed=ubuntu
 
@@ -89,11 +103,13 @@ cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kub
 
 #TODO Replace this with proper config management
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
-cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START" --in-place
-cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END" --in-place
+cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
+cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
 
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
-cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END" --in-place
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
+
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-rc.yaml=/etc/kubernetes/manifests/skydns-rc.yaml"
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-svc.yaml=/etc/kubernetes/manifests/skydns-svc.yaml" --in-place
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/kube-init.service=/lib/systemd/system/kube-init.service" --in-place
@@ -101,6 +117,8 @@ cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler
 cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/kube-routes.network=/lib/systemd/network/kube-routes.network"
 
 cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/docker-network.conf=/etc/systemd/system/docker.service.d/docker-network.conf" --in-place
+
+cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/kubelet.conf=/etc/kubernetes/node/kubelet.conf" --in-place
 
 if  [[ "${ENABLE_PROXY}" == "true" ]]; then
   cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/docker-proxy.conf=/etc/systemd/system/docker.service.d/docker-proxy.conf" --in-place

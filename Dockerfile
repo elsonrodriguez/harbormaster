@@ -24,6 +24,9 @@ ENV K8S_CLUSTER_IP_RANGE 10.254.0.0/16
 ENV K8S_SKYDNS_CLUSTERIP 10.254.0.10
 ENV K8S_NODE_POD_CIDR 10.244
 
+#The pattern to match for the root partition on the harbormaster server, see /dev/disk/by-path for examples
+ENV ROOT_DISK_PATH_PATTERN ''
+
 # TODO: grab ip information as a cidr and infer the other variables.
 ENV COBBLER_IP 172.16.101.100
 
