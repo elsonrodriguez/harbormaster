@@ -103,3 +103,15 @@ Once provisioning is finished, you can now build out your Kubernetes cluster.
 Provision your Kubernetes cluster by booting machines via PXE. It is best if you turn on one machine and wait for it to finish, this first machine will automatically be provisioned as a Master.
 
 All machines after that will be provisioned as Nodes.
+
+## Configure Kubernetes Client
+
+Configure `kubectl` to talk to your master by issuing the following commands:
+
+```
+kubecl config set....
+
+```
+
+
+
