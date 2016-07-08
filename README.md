@@ -1,6 +1,6 @@
 # Harbormaster 
 
-Harbormaster is a tool to bootstrap Kubernetes on Bare Metal
+Harbormaster is a tool to bootstrap Kubernetes on Bare Metal. It creates a boot image which provisions a Cobbler server which in turn provisions Kubernetes via PXE.
 
 # Requirements
 
@@ -53,24 +53,26 @@ NETWORK_DNS_REVERSE=192.168.100
 Run the container with your settings by issuing the following command:
 
 ```
-docker run --env-file=./networksettings -v ~/harbormaster-output/:/output/ -v ~/harbormaster-build/:/build/ -it --privileged --rm --entrypoint=/bin/bash harbormaster
+docker run --env-file=./networksettings -v ~/harbormaster-output/:/output/ -v ~/harbormaster-build/:/build/ -it --privileged --rm harbormaster
 ```
 
-This will result in many reusable temporary files output into `~/harbormaster-build/`, and one build artifact in `~/harbormaster-output/`: 
+This will download and process a few gigabytes worth of files. The process can take a few hours depending on your connection speed.
+
+Once finished, there will be temporary files saved into `~/harbormaster-build/` to speed up future builds. In `~/harbormaster-output/`, there will be the boot image: 
 
 ```
 ls -1sh ~/harbormaster-output/
-total 36008448
+total 24576000
 24576000 harbormaster.img
 ```
 
-## Boot Image 
+## Preparing the Boot Image
 
 The image can be written to a USB drive, converted to a virtual disk, or mounted via IPMI.
 
 ### Writing the image
 
-In unix-like operating systems, you can issue the following:
+In unix-like operating systems, make sure you correctly identify your USB device, then issue something like the following:
 
 ```
 dd if=~/harbormaster-output/harbormaster.img of=/dev/USB_DEVICE bs=5m
@@ -92,12 +94,12 @@ Many IPMI implementations allow you to mount the resulting image as a USB drive.
 
 ## Provision Harbormaster
 
-Once attached to a server and set as the primary boot device, the image will provision a Cobbler server.
+Once attached to a server and set as the primary boot device, the image will provision a Cobbler server named harbormaster.
 
-Once provisioning is finished, you can now build out your cluster.
+Once provisioning is finished, you can now build out your Kubernetes cluster.
 
 ## Provision Kubernetes Cluster
 
 Provision your Kubernetes cluster by booting machines via PXE. It is best if you turn on one machine and wait for it to finish, this first machine will automatically be provisioned as a Master.
 
-All machines after that will be provisioned as nodes.
+All machines after that will be provisioned as Nodes.
