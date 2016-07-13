@@ -1,8 +1,11 @@
 %pre
-export osdisk=$(find /dev/disk/by-path/ -name '$ROOT_DISK_PATH_PATTERN' -printf "%P" -quit)
+export osdiskid=$(find /dev/disk/by-path/ -name '$ROOT_DISK_PATH_PATTERN' -printf "%P" -quit)
 
-if [ -z "$osdir" ]; then
+if [ -z "$osdiskid" ]; then
   export osdisk="sda"
+else
+  osdiskpath=`readlink /dev/disk/by-path/$osdiskid`
+  export osdisk=`basename $osdiskpath`
 fi
 
 echo "ignoredisk --only-use=$osdisk" > /tmp/partition_table
