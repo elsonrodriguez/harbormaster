@@ -89,7 +89,7 @@ d-i passwd/make-user boolean false
 # Select which update services to use; define the mirrors to be used.
 # Values shown below are the normal defaults.
 # d-i apt-setup/services-select multiselect security
-# d-i apt-setup/security_host string security.ubuntu.com
+d-i apt-setup/security_host string $http_server
 # d-i apt-setup/security_path string /ubuntu
 
 $SNIPPET('preseed_apt_repo_config')

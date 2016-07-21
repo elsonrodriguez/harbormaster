@@ -50,6 +50,9 @@ mkdir main-mirror
 cd main-mirror
 for i in `cat ../ubuntu/repos/main/downloadlist` ; do curl -O $i -z `basename $i`; done
 cd ..
+rm -rf ubuntu/repos/main/pool
+rm -rf ubuntu/repos/main/dist
+rm -rf ubuntu/repos/main/db
 reprepro -b ubuntu/repos/main includedeb xenial ${BUILD_DIRECTORY}/main-mirror/*.deb
 
 # Mirror Universe, 60 gigs...
