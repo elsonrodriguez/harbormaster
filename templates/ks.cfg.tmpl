@@ -116,7 +116,7 @@ cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_e
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-rc.yaml=/etc/kubernetes/manifests/skydns-rc.yaml"
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-svc.yaml=/etc/kubernetes/manifests/skydns-svc.yaml" --in-place
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/kube-init.service=/lib/systemd/system/kube-init.service" --in-place
-cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/kube-routes.network=/lib/systemd/network/kube-routes.network"
+cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/kube-routes.network=/lib/systemd/network/kube-routes.network" --in-place
 cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/kube-routes.network=/lib/systemd/network/kube-routes.network"
 
 cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/docker-network.conf=/etc/systemd/system/docker.service.d/docker-network.conf" --in-place
