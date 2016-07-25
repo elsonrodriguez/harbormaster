@@ -104,14 +104,18 @@ cobbler profile edit --name=kubernetes-node --kickstart=/var/lib/cobbler/kicksta
 cobbler profile edit --name=kubernetes-master --ksmeta="extra_services='kube-init systemd-networkd etcd kube-apiserver kube-scheduler kube-controller-manager' extra_packages='etcd kubernetes-master koan'"
 cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kubelet kube-proxy systemd-networkd' extra_packages='docker-engine socat kubernetes-node ceph-fs-common koan'"
 
-#TODO Replace this with proper config management
+#TODO Replace this with proper config management, the ksmeta pieces may be reusable, but the template-files should go.
+#TODO Refactor, there's a master-profile pattern emerging.
+
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
+cobbler profile edit --name=kubernetes-master --in-place --ksmeta="root_disk_path_pattern=$ROOT_DISK_PATH_PATTERN"
 
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="root_disk_path_pattern=$ROOT_DISK_PATH_PATTERN"
 
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-rc.yaml=/etc/kubernetes/manifests/skydns-rc.yaml"
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-svc.yaml=/etc/kubernetes/manifests/skydns-svc.yaml" --in-place
