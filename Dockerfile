@@ -19,7 +19,7 @@ RUN git reset --hard d4be861171e6073f9060da0c86d09aef47a595a3
 ENV ENABLE_PROXY false
 
 ENV K8S_CLEAN_BUILD false
-ENV K8S_VERSION 1.3.0-alpha.5
+ENV K8S_VERSION 1.3.3
 ENV K8S_CLUSTER_IP_RANGE 10.254.0.0/16
 ENV K8S_SKYDNS_CLUSTERIP 10.254.0.10
 ENV K8S_NODE_POD_CIDR 10.244
@@ -49,7 +49,7 @@ ENV CENTOS_ISO_URL http://mirrors.cmich.edu/centos/7/isos/x86_64
 ENV CENTOS_ISO_NAME CentOS-7-x86_64-DVD-1511.iso
 
 ENV UBUNTU_ISO_URL http://mirror.pnl.gov/releases/16.04
-ENV UBUNTU_ISO_NAME ubuntu-16.04-server-amd64.iso
+ENV UBUNTU_ISO_NAME ubuntu-16.04.1-server-amd64.iso
 
 WORKDIR /source
 
