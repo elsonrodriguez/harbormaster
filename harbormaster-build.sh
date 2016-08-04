@@ -59,7 +59,7 @@ reprepro -b ubuntu/repos/main includedeb xenial ${BUILD_DIRECTORY}/main-mirror/*
 #./cobbler/bin/debmirror -v -p --no-check-gpg  -h archive.ubuntu.com -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe
 
 # Mirror just what we need from universe, notes for doing this are in ubuntu_required_packages.sh
-./cobbler/bin/debmirror -v -p -t 5 --no-check-gpg -h archive.ubuntu.com --i18n -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe/ --exclude-field=Package='*' --include-field=Package="ceph-fs-common|gir1.2-libosinfo|koan|python-ethtool|python-koan|virt-manager|gtk-vnc|libgvnc|libgtk-vnc|spice-gtk|spice-client|libgtk-vnc|virt-viewer|libspice|virtinst|cobbler|libosinfo|virt-viewer|socat|aufs|cgroup"
+./cobbler/bin/debmirror -v -p -t 5 --no-check-gpg -h archive.ubuntu.com --i18n -r ubuntu -d xenial -s universe -a amd64 --method=http --nosource ubuntu/repos/universe/ --exclude-field=Package='*' --include-field=Package="ceph-fs-common|gir1.2-libosinfo|koan|python-ethtool|python-koan|virt-manager|gtk-vnc|libgvnc|libgtk-vnc|spice-gtk|spice-client|libgtk-vnc|virt-viewer|libspice|virtinst|cobbler|libosinfo|virt-viewer|socat|aufs|cgroup|ceph-common"
 
 # Mirror Docker Repo
 ./cobbler/bin/debmirror -v -p -t 5 --no-check-gpg --rsync-extra=none -h apt.dockerproject.org -r repo -d ubuntu-xenial -s main -a amd64 --method=http --nosource ubuntu/repos/docker

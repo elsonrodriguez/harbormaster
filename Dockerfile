@@ -14,7 +14,8 @@ RUN chmod +x /source/cobbler/bin/debmirror
 
 RUN git clone https://github.com/elsonrodriguez/kubernetes-distro-packages.git /source/kubernetes-distro-packages
 WORKDIR  /source/kubernetes-distro-packages
-RUN git reset --hard d4be861171e6073f9060da0c86d09aef47a595a3
+#RUN git reset --hard d4be861171e6073f9060da0c86d09aef47a595a3
+RUN git reset --hard 7ee27130aaa3808c2c4bf89e28e3ecd9be26977c
 
 ENV ENABLE_PROXY false
 

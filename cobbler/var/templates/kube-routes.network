@@ -1,5 +1,14 @@
 #from netaddr import iter_iprange
-#set node_address = $interfaces.itervalues().next()['ip_address']
+##set node_address = $interfaces.itervalues().next()['ip_address']
+#set ikeys = $interfaces.keys()
+   #for $iname in $ikeys
+        #set $idata = $interfaces[$iname]
+        #if $idata["ip_address"] != ""
+            #set node_address = $idata["ip_address"]
+        #end if
+    #end for
+
+
 
 #for $ip_addr in iter_iprange($network_bootp_start, $network_bootp_end)
   #if $node_address != str($ip_addr)

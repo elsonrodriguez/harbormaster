@@ -102,7 +102,7 @@ cobbler profile edit --name=kubernetes-node --kickstart=/var/lib/cobbler/kicksta
 
 #TODO Need to find a cleaner way to do this. The issue is that I couldn't figure out how to get debian-installer to install these packages during main setup.
 cobbler profile edit --name=kubernetes-master --ksmeta="extra_services='kube-init systemd-networkd etcd kube-apiserver kube-scheduler kube-controller-manager' extra_packages='etcd kubernetes-master koan'"
-cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kubelet kube-proxy systemd-networkd' extra_packages='docker-engine socat kubernetes-node ceph-fs-common koan'"
+cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kubelet kube-proxy systemd-networkd' extra_packages='docker-engine socat kubernetes-node ceph-common ceph-fs-common koan'"
 
 #TODO Replace this with proper config management, the ksmeta pieces may be reusable, but the template-files should go.
 #TODO Refactor, there's a master-profile pattern emerging.
