@@ -330,3 +330,5 @@ http://archive.ubuntu.com/ubuntu/pool/main/s/sharutils/sharutils_4.15.2-1_amd64.
 http://archive.ubuntu.com/ubuntu/pool/main/t/tcp-wrappers/tcpd_7.6.q-25_amd64.deb
 http://archive.ubuntu.com/ubuntu/pool/main/v/vbetool/vbetool_1.1-3_amd64.deb
 http://archive.ubuntu.com/ubuntu/pool/universe/v/virt-viewer/virt-viewer_1.0-1_amd64.deb
+http://security.ubuntu.com/ubuntu/pool/universe/d/dnsmasq/dnsmasq_2.75-1ubuntu0.15.10.1_all.deb
+http://mirrors.kernel.org/ubuntu/pool/main/c/conntrack-tools/conntrack_1.4.3-3_amd64.deb

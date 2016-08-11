@@ -28,7 +28,7 @@ network --bootproto=static --ip=${COBBLER_IP} --netmask=${NETWORK_NETMASK} --gat
 selinux --disabled
 firewall --disabled
 
-timezone America/Los_Angeles
+timezone $timezone --ntpservers $ntp_server
 
 #set number of masters until nodes are provisioned.
 repo --name="Cobbler" --baseurl=file:///run/install/isodir/cobbler-repo --excludepkgs=systemd,systemd-libs,kpartx --install
@@ -102,7 +102,7 @@ cobbler profile edit --name=kubernetes-node --kickstart=/var/lib/cobbler/kicksta
 
 #TODO Need to find a cleaner way to do this. The issue is that I couldn't figure out how to get debian-installer to install these packages during main setup.
 cobbler profile edit --name=kubernetes-master --ksmeta="extra_services='kube-init systemd-networkd etcd kube-apiserver kube-scheduler kube-controller-manager' extra_packages='etcd kubernetes-master koan'"
-cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kubelet kube-proxy systemd-networkd' extra_packages='docker-engine socat kubernetes-node ceph-common ceph-fs-common koan'"
+cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kubelet kube-proxy systemd-networkd' extra_packages='docker-engine socat kubernetes-node ceph-common ceph-fs-common koan dnsmasq conntrack'"
 
 #TODO Replace this with proper config management, the ksmeta pieces may be reusable, but the template-files should go.
 #TODO Refactor, there's a master-profile pattern emerging.
@@ -110,12 +110,18 @@ cobbler profile edit --name=kubernetes-node --ksmeta="extra_services='docker kub
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
+cobbler profile edit --name=kubernetes-master --in-place --ksmeta="root_disk_path_pattern_ubuntu=$ROOT_DISK_PATH_PATTERN_UBUNTU"
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="root_disk_path_pattern=$ROOT_DISK_PATH_PATTERN"
+cobbler profile edit --name=kubernetes-master --in-place --ksmeta="ntp_server=$NTP_SERVER"
+cobbler profile edit --name=kubernetes-master --in-place --ksmeta="timezone=$TIMEZONE"
 
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="root_disk_path_pattern=$ROOT_DISK_PATH_PATTERN"
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="root_disk_path_pattern_ubuntu=$ROOT_DISK_PATH_PATTERN_UBUNTU"
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="ntp_server=$NTP_SERVER"
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="timezone=$TIMEZONE"
 
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-rc.yaml=/etc/kubernetes/manifests/skydns-rc.yaml"
 cobbler profile edit --name=kubernetes-master --template-files="/var/lib/cobbler/templates/skydns-svc.yaml=/etc/kubernetes/manifests/skydns-svc.yaml" --in-place
