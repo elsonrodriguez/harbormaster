@@ -15,7 +15,8 @@ RUN chmod +x /source/cobbler/bin/debmirror
 RUN git clone https://github.com/elsonrodriguez/kubernetes-distro-packages.git /source/kubernetes-distro-packages
 WORKDIR  /source/kubernetes-distro-packages
 #RUN git reset --hard d4be861171e6073f9060da0c86d09aef47a595a3
-RUN git reset --hard 7ee27130aaa3808c2c4bf89e28e3ecd9be26977c
+#RUN git reset --hard 7ee27130aaa3808c2c4bf89e28e3ecd9be26977c
+RUN git reset --hard 1783c3b0b35178a438ce5371e2872f9c0da96ab3
 
 ENV ENABLE_PROXY false
 
@@ -23,7 +24,9 @@ ENV K8S_CLEAN_BUILD false
 ENV K8S_VERSION 1.3.3
 ENV K8S_CLUSTER_IP_RANGE 10.254.0.0/16
 ENV K8S_SKYDNS_CLUSTERIP 10.254.0.10
-ENV K8S_NODE_POD_CIDR 10.244
+
+#Pod IP ranges are automatically assigned per node, if a node has IP address 10.100.200.1, that node will have Pods on 10.200.1.0/24. However this variable has to be manually set to that range of all of your nodes for kube-proxy's sake.
+ENV K8S_NODE_POD_CIDR 10.200.0.0/16
 
 ENV TIMEZONE America/Los_Angeles
 ENV NTP_SERVER pool.ntp.org

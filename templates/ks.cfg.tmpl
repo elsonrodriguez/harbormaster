@@ -116,6 +116,7 @@ cobbler profile edit --name=kubernetes-master --in-place --ksmeta="ntp_server=$N
 cobbler profile edit --name=kubernetes-master --in-place --ksmeta="timezone=$TIMEZONE"
 
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="k8s_skydns_clusterip=$K8S_SKYDNS_CLUSTERIP"
+cobbler profile edit --name=kubernetes-node --in-place --ksmeta="k8s_node_pod_cidr=$K8S_NODE_POD_CIDR"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_start=$NETWORK_BOOTP_START"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="network_bootp_end=$NETWORK_BOOTP_END"
 cobbler profile edit --name=kubernetes-node --in-place --ksmeta="root_disk_path_pattern=$ROOT_DISK_PATH_PATTERN"
@@ -132,6 +133,9 @@ cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/t
 cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/docker-network.conf=/etc/systemd/system/docker.service.d/docker-network.conf" --in-place
 
 cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/kubelet.conf=/etc/kubernetes/node/kubelet.conf" --in-place
+cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/kubernetes-dns.conf=/etc/dnsmasq.d/kubernetes-dns.conf" --in-place
+cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/kube-proxy.conf=/etc/kubernetes/node/kube-proxy.conf" --in-place
+
 
 if  [[ "${ENABLE_PROXY}" == "true" ]]; then
   cobbler profile edit --name=kubernetes-node --template-files="/var/lib/cobbler/templates/docker-proxy.conf=/etc/systemd/system/docker.service.d/docker-proxy.conf" --in-place
