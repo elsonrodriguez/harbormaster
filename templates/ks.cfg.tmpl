@@ -93,6 +93,7 @@ cobbler repo add --name=docker --apt-components=main --breed=apt --apt-dists=ubu
 cobbler repo add --name=kubernetes --apt-components=kubernetes --breed=apt --apt-dists=xenial  --keep-updated=n --arch=x86_64 --mirror=/var/lib/ubuntu/repos/kubernetes/
 
 cobbler profile edit --name=ubuntu-server-16.04-x86_64 --repos="kubernetes docker main universe"
+cobbler distro edit --name=ubuntu-server-16.04-x86_64 --kopts="netcfg/choose_interface=auto"
 
 cobbler profile add --parent=ubuntu-server-16.04-x86_64 --name=kubernetes-master
 cobbler profile add --parent=ubuntu-server-16.04-x86_64 --name=kubernetes-node
