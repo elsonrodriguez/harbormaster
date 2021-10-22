@@ -6,7 +6,11 @@ RUN yum install -y cobbler reprepro
 
 RUN yum install -y perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https 
 
-RUN gem install fpm -v 1.6.1
+RUN ruby --version
+RUN gem install bundler -v 1.17.3
+
+COPY Gemfile .
+RUN bundle install
 
 ADD . /source
 RUN chmod +x /source/*.sh
