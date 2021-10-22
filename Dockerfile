@@ -6,7 +6,6 @@ RUN yum install -y cobbler reprepro
 
 RUN yum install -y perl-LockFile-Simple perl-IO-Compress perl-Compress-Raw-Zlib perl-Digest-MD5 perl-Digest-SHA perl-Net-INET6Glue perl-LWP-Protocol-https 
 
-RUN ruby --version
 RUN gem install bundler -v 1.17.3
 
 COPY Gemfile .
